@@ -1,0 +1,33 @@
+.section.blog .blog-items {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 20px;
+}
+
+.section.blog .blog-item {
+    background: #373b40;
+    padding: 20px;
+    border-radius: 10px;
+}
+
+.section.blog .blog-item .date {
+    font-size: 12px;
+    color: #68e0cf;
+}
+
+.section.blog .blog-item .name {
+    font-size: 18px;
+    font-weight: bold;
+    margin: 10px 0;
+    color: #fff;
+}
+
+.section.blog .blog-item .category {
+    font-size: 14px;
+    color: #68e0cf;
+}
+
+.section.blog .blog-item .text {
+    margin: 10px 0;
+    color: #fff;
+}
