@@ -172,55 +172,39 @@
 	/*
 		One Page Menu
 	*/
-	$('header .top-menu').on('click', 'a', function(){
-		var link = $(this).attr('href');
-		if(link.indexOf('#section-') == 0){
-			if(!$('body').hasClass('home')){
-				location.href = '/'+link;
-			}
-
-			$('body, html').animate({scrollTop: $(link).offset().top - 115}, 400);
-			if($('header').hasClass('active')){
-				$('.menu-btn').trigger('click');
-			}
-		}
-		else {
-			var preload = $('.preloader');
-			preload.find('.box-1').velocity({
-				translateY: '0%'
-			}, {
-				duration: 400,
-				easing: [0.7,0,0.3,1]
-			});
-			preload.find('.box-2').velocity({
-				translateY: '0%'
-			}, {
-				duration: 1000,
-				easing: [0.7,0,0.3,1],
-				complete: function(){
-					location.href = link;
-				}
-			});
-		}
-		return false;
-	});
-	if($('.section').length && $('.top-menu li a').length) {
-		$(window).on('scroll', function(){
-			var scrollPos = $(window).scrollTop();
-			$('.top-menu ul li a').each(function () {
-				if($(this).attr('href').indexOf('#section-') == 0){
-					var currLink = $(this);
-					var refElement = $(currLink.attr("href"));
-					if(refElement.length){
-						if (refElement.offset().top <= scrollPos + 120) {
-							$('.top-menu ul li').removeClass("current-menu-item");
-							currLink.closest('li').addClass("current-menu-item");
-						}
-					}
-				}
-			});
-		});
-	}
+$('header .top-menu').on('click', 'a', function (event) {
+    var link = $(this).attr('href');
+    if (link === '/blog.html') {
+        // Allow default navigation for the blog link
+        return true;
+    } else if (link.indexOf('#section-') == 0) {
+        // Same-page navigation for other links
+        $('body, html').animate({ scrollTop: $(link).offset().top - 115 }, 400);
+        if ($('header').hasClass('active')) {
+            $('.menu-btn').trigger('click');
+        }
+        event.preventDefault(); // Prevent default navigation for same-page links
+    } else {
+        // For any other links, perform your custom logic if needed
+        var preload = $('.preloader');
+        preload.find('.box-1').velocity({
+            translateY: '0%'
+        }, {
+            duration: 400,
+            easing: [0.7, 0, 0.3, 1]
+        });
+        preload.find('.box-2').velocity({
+            translateY: '0%'
+        }, {
+            duration: 1000,
+            easing: [0.7, 0, 0.3, 1],
+            complete: function () {
+                location.href = link;
+            }
+        });
+        event.preventDefault(); // Prevent default navigation if custom logic is applied
+    }
+});
 
 	/*
 		Header On Scroll 
@@ -517,6 +501,59 @@ document.addEventListener('DOMContentLoaded', function() {
     setTimeout(function() {
         document.body.classList.add('loaded');
     }, 2000); // Adjust this timing as needed
+});
+document.addEventListener('DOMContentLoaded', () => {
+    const footer = document.querySelector('.footer');
+    const meteor = footer.querySelector('.meteor');
+    const particlesContainer = footer.querySelector('.particles');
+    
+    function createParticle() {
+        const particle = document.createElement('div');
+        particle.style.position = 'absolute';
+        particle.style.width = '2px';
+        particle.style.height = '2px';
+        particle.style.backgroundColor = '#00fff0';
+        particle.style.borderRadius = '50%';
+        particle.style.opacity = '0.7';
+        return particle;
+    }
+    
+    function animateParticle(particle, startX, startY) {
+        const duration = 800 + Math.random() * 1200; // 0.8-2 seconds
+        const endY = startY + (Math.random() * 30 - 15);
+        const endX = startX + (Math.random() * 20 - 10);
+        
+        particle.animate([
+            { transform: `translate(${startX}px, ${startY}px)`, opacity: 0.7 },
+            { transform: `translate(${endX}px, ${endY}px)`, opacity: 0 }
+        ], {
+            duration: duration,
+            easing: 'ease-out'
+        }).onfinish = () => particle.remove();
+    }
+    
+    function updateMeteorAndParticles() {
+        const meteorRect = meteor.getBoundingClientRect();
+        const footerRect = footer.getBoundingClientRect();
+        const relativeY = meteorRect.top - footerRect.top;
+        
+        if (Math.random() < 0.4) {
+            const particle = createParticle();
+            let startX, startY;
+            
+            // Generate particles along the meteor's tail
+            startX = 8 + Math.random() * 6 - 3; // Centered around the line
+            startY = relativeY + Math.random() * 60; // Adjust based on meteor height
+            
+            particle.style.left = '0px';
+            particlesContainer.appendChild(particle);
+            animateParticle(particle, startX, startY);
+        }
+        
+        requestAnimationFrame(updateMeteorAndParticles);
+    }
+    
+    updateMeteorAndParticles();
 });
 	/*
 		Validate Contact Form
